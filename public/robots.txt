@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ular-tangga.example.com/sitemap.xml

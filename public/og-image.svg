@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e1b4b"/>
+      <stop offset="1" stop-color="#0b1020"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0.15" cy="0.2" r="0.5">
+      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.85" cy="0.85" r="0.5">
+      <stop offset="0" stop-color="#06b6d4" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#06b6d4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="snake" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16a34a"/>
+      <stop offset="0.5" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <!-- Decorative ladder, top-right -->
+  <g transform="translate(940 60) rotate(20)">
+    <line x1="0" y1="0" x2="0" y2="360" stroke="#451a03" stroke-width="22" stroke-linecap="round"/>
+    <line x1="60" y1="0" x2="60" y2="360" stroke="#451a03" stroke-width="22" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="0" y2="360" stroke="#b45309" stroke-width="16" stroke-linecap="round"/>
+    <line x1="60" y1="0" x2="60" y2="360" stroke="#b45309" stroke-width="16" stroke-linecap="round"/>
+    <g stroke="#f59e0b" stroke-width="12" stroke-linecap="round">
+      <line x1="-10" y1="30"  x2="70" y2="30"/>
+      <line x1="-10" y1="80"  x2="70" y2="80"/>
+      <line x1="-10" y1="130" x2="70" y2="130"/>
+      <line x1="-10" y1="180" x2="70" y2="180"/>
+      <line x1="-10" y1="230" x2="70" y2="230"/>
+      <line x1="-10" y1="280" x2="70" y2="280"/>
+      <line x1="-10" y1="330" x2="70" y2="330"/>
+    </g>
+    <line x1="0" y1="0" x2="0" y2="360" stroke="#fde68a" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+    <line x1="60" y1="0" x2="60" y2="360" stroke="#fde68a" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+  </g>
+
+  <!-- Decorative snake, bottom-left -->
+  <g transform="translate(60 420)">
+    <path d="M 0 0 C 100 -80, 220 80, 340 -20 C 420 -80, 480 -10, 520 -60"
+      stroke="#052e16" stroke-width="58" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="M 0 0 C 100 -80, 220 80, 340 -20 C 420 -80, 480 -10, 520 -60"
+      stroke="url(#snake)" stroke-width="44" fill="none" stroke-linecap="round"/>
+    <path d="M 0 0 C 100 -80, 220 80, 340 -20 C 420 -80, 480 -10, 520 -60"
+      stroke="#052e16" stroke-width="40" fill="none" stroke-linecap="round"
+      stroke-dasharray="6 22" opacity="0.55"/>
+    <path d="M 0 0 C 100 -80, 220 80, 340 -20 C 420 -80, 480 -10, 520 -60"
+      stroke="#bbf7d0" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <!-- Snake head -->
+    <g transform="translate(520 -60) rotate(-35)">
+      <path d="M -10 -28 Q 42 -32 48 0 Q 42 32 -10 28 Z"
+        fill="url(#snake)" stroke="#052e16" stroke-width="3"/>
+      <circle cx="16" cy="-14" r="7" fill="#fde047"/>
+      <circle cx="16" cy="14" r="7" fill="#fde047"/>
+      <ellipse cx="17" cy="-14" rx="3" ry="5" fill="#000"/>
+      <ellipse cx="17" cy="14" rx="3" ry="5" fill="#000"/>
+      <path d="M 48 0 L 70 0 M 70 0 L 82 -8 M 70 0 L 82 8"
+        stroke="#dc2626" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="80" y="260" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+    font-size="148" font-weight="900" fill="url(#title)" letter-spacing="-3">Ular Tangga</text>
+
+  <!-- Tagline -->
+  <text x="80" y="320" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+    font-size="34" font-weight="500" fill="#cbd5e1">Naik tangga, hindari ular — sampai 100 dulu menang.</text>
+
+  <!-- Feature pills -->
+  <g font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="22" font-weight="600">
+    <g transform="translate(80 380)">
+      <rect width="200" height="48" rx="24" fill="rgba(139,92,246,0.18)" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="100" y="31" fill="#e9d5ff" text-anchor="middle">🤖 vs Bot AI</text>
+    </g>
+    <g transform="translate(300 380)">
+      <rect width="240" height="48" rx="24" fill="rgba(6,182,212,0.18)" stroke="#06b6d4" stroke-width="1.5"/>
+      <text x="120" y="31" fill="#cffafe" text-anchor="middle">👥 2-4 Pass &amp; Play</text>
+    </g>
+    <g transform="translate(560 380)">
+      <rect width="200" height="48" rx="24" fill="rgba(245,158,11,0.18)" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="100" y="31" fill="#fef3c7" text-anchor="middle">🔊 Suara Efek</text>
+    </g>
+  </g>
+</svg>

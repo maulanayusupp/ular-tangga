@@ -4,13 +4,106 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#0f172a" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Primary Meta Tags -->
+    <title>Ular Tangga — Game Online Klasik 1-4 Pemain | Mobile Web</title>
+    <meta name="description" content="Main ular tangga online gratis di HP. Mode lawan bot atau pass-and-play 2-4 pemain. Animasi modern, efek suara realistis, tanpa download — langsung jalan di browser." />
+    <meta name="keywords" content="ular tangga, ular tangga online, snake and ladder, game ular tangga, ular tangga mobile, ular tangga gratis, ular tangga 4 pemain, board game online, game klasik indonesia, ular tangga vs bot" />
+    <meta name="author" content="Maulana" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://ular-tangga.example.com/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ular-tangga.example.com/" />
+    <meta property="og:title" content="Ular Tangga — Game Online Klasik Mobile" />
+    <meta property="og:description" content="Main ular tangga online gratis di HP. Vs bot atau pass-and-play 2-4 pemain. Animasi modern + suara realistis." />
+    <meta property="og:image" content="https://ular-tangga.example.com/og-image.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Ular Tangga — Game ular tangga klasik mobile web" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:site_name" content="Ular Tangga" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://ular-tangga.example.com/" />
+    <meta name="twitter:title" content="Ular Tangga — Game Online Klasik Mobile" />
+    <meta name="twitter:description" content="Main ular tangga online gratis di HP. Vs bot atau pass-and-play 2-4 pemain." />
+    <meta name="twitter:image" content="https://ular-tangga.example.com/og-image.svg" />
+    <meta name="twitter:image:alt" content="Ular Tangga — Game ular tangga klasik mobile web" />
+
+    <!-- PWA & iOS -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Ular Tangga</title>
+    <meta name="apple-mobile-web-app-title" content="Ular Tangga" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Ular Tangga" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Performance hints -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+
+    <!-- Structured Data: VideoGame schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoGame",
+      "name": "Ular Tangga",
+      "alternateName": ["Snakes and Ladders", "Tangga Ular"],
+      "description": "Game ular tangga klasik versi mobile web. Mode vs AI atau pass-and-play 2-4 pemain dengan animasi modern dan efek suara realistis. Gratis, tanpa download.",
+      "url": "https://ular-tangga.example.com/",
+      "image": "https://ular-tangga.example.com/og-image.svg",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Any (Web Browser)",
+      "genre": ["Board Game", "Casual", "Family", "Strategy"],
+      "gamePlatform": ["Web Browser", "Mobile Web", "Progressive Web App"],
+      "playMode": ["SinglePlayer", "MultiPlayer"],
+      "numberOfPlayers": {
+        "@type": "QuantitativeValue",
+        "minValue": 1,
+        "maxValue": 4
+      },
+      "inLanguage": "id",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "IDR",
+        "availability": "https://schema.org/InStock"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Maulana"
+      }
+    }
+    </script>
+
+    <!-- Structured Data: WebSite (sitelinks search) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Ular Tangga",
+      "url": "https://ular-tangga.example.com/",
+      "inLanguage": "id"
+    }
+    </script>
   </head>
   <body>
     <div id="app"></div>
+    <noscript>
+      <div style="padding:24px;color:#f1f5f9;font-family:system-ui,sans-serif;text-align:center">
+        <h1>Ular Tangga</h1>
+        <p>Aktifkan JavaScript di browser kamu untuk memainkan game ular tangga.</p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
