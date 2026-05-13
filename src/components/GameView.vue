@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, onBeforeUnmount } from 'vue'
 import GameBoard from './GameBoard.vue'
 import DiceRoller from './DiceRoller.vue'
 
@@ -10,8 +10,25 @@ const turnHint = computed(() => {
   if (props.game.isRolling.value) return 'Rolling dice…'
   if (props.game.isMoving.value) return 'Token moving…'
   if (props.game.isAITurn.value) return 'Bot is thinking…'
-  return 'Your turn — tap the dice'
+  return 'Your turn — tap dice or press Space'
 })
+
+function handleKeydown(e) {
+  if (e.code !== 'Space' && e.key !== ' ') return
+  if (e.repeat) return
+  if (props.game.mode.value !== 'playing') return
+  const t = e.target
+  if (!t) return
+  // Skip when typing in inputs/contenteditable
+  if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable) return
+  // Skip when another focused button should handle Space natively (e.g., Back button, modal actions)
+  if (t.tagName === 'BUTTON' && !t.closest('.dice-btn')) return
+  e.preventDefault()
+  props.game.rollDice()
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
 </script>
 
 <template>
