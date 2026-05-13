@@ -1,6 +1,6 @@
-# Ular Tangga — Project Notes
+# Snakes & Ladders — Project Notes
 
-Vue 3 + Vite mobile-first Snakes & Ladders game. Modes: vs AI (1 bot) or pass-and-play (2–4 players). Indonesian UI.
+Vue 3 + Vite mobile-first Snakes & Ladders game. Modes: vs AI (1 bot) or pass-and-play (2–4 players). English UI. Repo folder is `ular-tangga` (Indonesian name for the game) — kept for the package identifier, but all user-facing strings and SEO are English.
 
 ## Architecture
 
@@ -40,7 +40,7 @@ All sounds route through a singleton `masterGain` (0.7) that `setMuted(true)` ze
 
 ## SEO / PWA placeholders
 
-Domain placeholder is `https://ular-tangga.example.com`. Before deploying, search-replace it across:
+Domain placeholder is `https://snakes-and-ladders.example.com`. Before deploying, search-replace it across:
 - `index.html` (canonical, og:url, twitter:url, JSON-LD `url`)
 - `public/robots.txt` (Sitemap line)
 - `public/sitemap.xml` (`<loc>`)

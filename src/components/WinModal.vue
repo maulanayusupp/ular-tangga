@@ -39,12 +39,12 @@ function playAgain() {
 
     <div class="modal">
       <div class="trophy">🏆</div>
-      <h2>Selamat!</h2>
+      <h2>Congratulations!</h2>
       <p class="winner-name" :style="{ color: w.color.token }">
-        {{ w.name }} menang!
+        {{ w.name }} wins!
       </p>
       <div class="actions">
-        <button class="btn primary" @click="playAgain">Main Lagi</button>
+        <button class="btn primary" @click="playAgain">Play Again</button>
         <button class="btn ghost" @click="game.goToMenu()">Menu</button>
       </div>
     </div>

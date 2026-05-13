@@ -21,31 +21,31 @@ function play() {
         <span class="logo-emoji">🪜</span>
         <span class="logo-emoji snake">🐍</span>
       </div>
-      <h1>Ular Tangga</h1>
-      <p class="tagline">Naik tangga, hindari ular. Capai 100 dulu!</p>
+      <h1>Snakes &amp; Ladders</h1>
+      <p class="tagline">Climb ladders, dodge snakes. First to 100 wins!</p>
     </header>
 
     <section class="card">
-      <h2>Pilih Mode</h2>
+      <h2>Choose Mode</h2>
       <div class="mode-grid">
         <button
           :class="['mode-btn', { active: mode === 'ai' }]"
           @click="mode = 'ai'">
           <span class="mode-icon">🤖</span>
-          <span class="mode-title">Lawan Bot</span>
+          <span class="mode-title">vs Bot</span>
           <span class="mode-desc">1 vs AI</span>
         </button>
         <button
           :class="['mode-btn', { active: mode === 'pvp' }]"
           @click="mode = 'pvp'">
           <span class="mode-icon">👥</span>
-          <span class="mode-title">Pass & Play</span>
-          <span class="mode-desc">2–4 pemain</span>
+          <span class="mode-title">Pass &amp; Play</span>
+          <span class="mode-desc">2–4 players</span>
         </button>
       </div>
 
       <div v-if="mode === 'pvp'" class="player-count">
-        <label>Jumlah Pemain</label>
+        <label>Players</label>
         <div class="count-pills">
           <button
             v-for="n in [2, 3, 4]"
@@ -57,7 +57,7 @@ function play() {
     </section>
 
     <button class="play-btn" @click="play">
-      Main Sekarang
+      Play Now
       <span class="arrow">→</span>
     </button>
 

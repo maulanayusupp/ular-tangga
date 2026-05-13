@@ -1,43 +1,43 @@
-# 🪜🐍 Ular Tangga
+# 🪜🐍 Snakes & Ladders
 
-Game ular tangga klasik versi **mobile web**, dibuat dengan **Vue 3 + Vite**. Gratis, tanpa download, langsung jalan di browser HP atau desktop.
+Classic Snakes & Ladders board game as a **mobile-first web app**, built with **Vue 3 + Vite**. Free, no download — runs in any modern browser.
 
-> Naik tangga, hindari ular — sampai 100 dulu menang.
+> Climb ladders, dodge snakes — first to 100 wins.
 
-## ✨ Fitur
+## ✨ Features
 
-- 🤖 **Mode vs Bot** — Lawan 1 AI yang main otomatis
-- 👥 **Pass & Play** — 2–4 pemain bergantian di satu HP
-- 🎨 **Design modern** — Dark theme, gradient ungu-cyan, mobile-first responsive
-- 🎬 **Animasi halus** — Token jalan step-by-step, slide saat kena ular/tangga, confetti saat menang
-- 🔊 **Suara realistis** — Web Audio API menghasilkan suara dadu, langkah, naik tangga (arpeggio), turun ular (slide whistle + hiss), dan fanfare kemenangan — **tanpa file audio**
-- 🪧 **Indikator arah** — Badge `↑38` / `↓6` di cell awal tangga & ular
-- 📱 **PWA-ready** — Bisa di-install ke home screen iOS/Android
-- 🪜 **11 tangga & 10 ular** — Layout klasik
-- 🔍 **SEO-optimized** — Meta tags lengkap, Open Graph, Twitter Card, JSON-LD schema
+- 🤖 **vs AI Bot** — Single-player against an automatic opponent
+- 👥 **Pass & Play** — 2–4 players taking turns on one device
+- 🎨 **Modern design** — Dark theme, purple-cyan gradient, mobile-first responsive
+- 🎬 **Smooth animations** — Token walks cell-by-cell, slides on snakes/ladders, confetti on win
+- 🔊 **Realistic sound effects** — Web Audio API synthesizes dice clatter, footsteps, ladder arpeggio, snake slide-whistle + hiss, and a win fanfare — **no audio assets**
+- 🪧 **Direction indicators** — `↑38` / `↓6` badges on snake/ladder start cells
+- 📱 **PWA-ready** — Install to iOS/Android home screen
+- 🪜 **11 ladders & 10 snakes** — Classic layout
+- 🔍 **SEO-optimized** — Full meta tags, Open Graph, Twitter Card, JSON-LD schema
 
-## 🚀 Cara Jalankan
+## 🚀 Getting Started
 
 ```bash
 npm install
-npm run dev          # dev server di http://localhost:5173
-npm run build        # build produksi → dist/
-npm run preview      # preview build produksi
+npm run dev          # dev server at http://localhost:5173
+npm run build        # production build → dist/
+npm run preview      # preview the production build
 ```
 
-> **Catatan**: kalau `localhost:5173` ke-route ke project Vite lain (misal Laravel), pakai `127.0.0.1:5173` saja.
+> **Note**: If `localhost:5173` routes to another Vite project (e.g. a Laravel app on the same machine), use `127.0.0.1:5173` instead.
 
 ## 🛠 Tech Stack
 
-| Layer | Pilihan |
+| Layer | Choice |
 | --- | --- |
 | Framework | Vue 3 (Composition API) |
 | Bundler | Vite 5 |
 | Audio | Web Audio API (synthesized, no assets) |
-| Grafik | CSS Grid + inline SVG |
+| Graphics | CSS Grid + inline SVG |
 | Install | PWA Manifest (mobile home screen) |
 
-## 📦 Struktur Project
+## 📦 Project Structure
 
 ```
 ular-tangga/
@@ -49,31 +49,31 @@ ular-tangga/
 │   ├── robots.txt
 │   └── sitemap.xml
 └── src/
-    ├── App.vue                   Root, switch menu/game
+    ├── App.vue                   Root, switches between menu and game
     ├── main.js
     ├── style.css                 Global styles, CSS variables, dark theme
     ├── components/
-    │   ├── MainMenu.vue          Pilih mode + jumlah pemain
-    │   ├── GameView.vue          Layout in-game (header + board + dice)
+    │   ├── MainMenu.vue          Mode + player count selection
+    │   ├── GameView.vue          In-game layout (header + board + dice)
     │   ├── GameBoard.vue         CSS grid + SVG overlay + tokens
-    │   ├── DiceRoller.vue        Dadu 3D animasi spin
-    │   └── WinModal.vue          Modal menang + confetti
+    │   ├── DiceRoller.vue        Animated dice button
+    │   └── WinModal.vue          Win modal + confetti
     └── composables/
         ├── useGameState.js       Game logic + state (single source of truth)
         └── useSound.js           Web Audio synthesis
 ```
 
-## 🎲 Aturan Main
+## 🎲 Rules
 
-- Lemparan dadu **1–6**
-- Sampai **cell 100** = menang
-- Kalau lemparan melebihi 100 → **bounce back** (mundur dari 100)
-- Mendarat di **kepala ular** → turun ke ekor (badge `↓nn`)
-- Mendarat di **kaki tangga** → naik ke ujung atas (badge `↑nn`)
+- Roll a **1–6** die
+- Reach **cell 100** to win
+- If the roll overshoots 100 → **bounce back** the excess from 100
+- Landing on a **snake's head** → slide down to its tail (badge `↓nn`)
+- Landing on a **ladder's foot** → climb up to its top (badge `↑nn`)
 
-### Daftar Tangga
+### Ladders
 
-| Naik dari | Ke |
+| From | To |
 | ---: | ---: |
 | 2 | 38 |
 | 7 | 14 |
@@ -87,9 +87,9 @@ ular-tangga/
 | 78 | 98 |
 | 87 | 94 |
 
-### Daftar Ular
+### Snakes
 
-| Kepala (mendarat di) | Ekor (turun ke) |
+| Head (landing) | Tail (destination) |
 | ---: | ---: |
 | 16 | 6 |
 | 46 | 25 |
@@ -108,23 +108,23 @@ ular-tangga/
 - Safari 14+ (iOS 14+)
 - Firefox 78+
 
-Web Audio API butuh user gesture pertama — sound auto-aktif setelah tap dadu pertama.
+The Web Audio API requires a user gesture for the first sound — audio activates automatically after the first dice tap.
 
 ## 🚢 Deployment
 
-Hasil `npm run build` di folder `dist/` adalah **static files** — bisa di-deploy ke:
+`npm run build` outputs static files to `dist/`. Deploy to any static host:
 
-- Vercel / Netlify / Cloudflare Pages (drag & drop folder `dist`)
+- Vercel / Netlify / Cloudflare Pages (drop the `dist/` folder)
 - GitHub Pages
-- Static hosting biasa (S3, nginx, dll)
+- Any static hosting (S3, nginx, etc.)
 
-**Sebelum deploy, ganti placeholder URL** di file-file berikut dengan domain final:
+**Before deploying, replace the placeholder URL** in these files with your real domain:
 
 - `index.html` (canonical, og:url, twitter:url, JSON-LD url, og:image, twitter:image)
-- `public/robots.txt` (sitemap URL)
+- `public/robots.txt` (Sitemap URL)
 - `public/sitemap.xml` (`<loc>`)
 
-Cari & ganti `https://ular-tangga.example.com` → URL kamu.
+Find & replace `https://snakes-and-ladders.example.com` → your URL.
 
 ## 📄 License
 

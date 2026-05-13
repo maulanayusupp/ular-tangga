@@ -26,7 +26,7 @@ const pips = {
     class="dice-btn"
     :disabled="disabled"
     @click="game.rollDice()"
-    :aria-label="`Lempar dadu, hasil ${value}`">
+    :aria-label="`Roll dice, last result ${value}`">
     <div class="dice" :class="{ rolling: game.isRolling.value }">
       <div class="face">
         <span

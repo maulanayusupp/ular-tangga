@@ -117,14 +117,14 @@ function cellClass(n) {
         :key="cell.n"
         :class="['cell', cellClass(cell.n), { dark: (cell.displayRow + cell.col) % 2 === 0 }]">
         <span class="cell-num">{{ cell.n }}</span>
-        <span v-if="LADDERS[cell.n]" class="cell-arrow up" aria-label="naik">
+        <span v-if="LADDERS[cell.n]" class="cell-arrow up" aria-label="climb">
           <svg viewBox="0 0 24 24" width="100%" height="100%">
             <path d="M12 4 L12 20 M12 4 L6 10 M12 4 L18 10"
               stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
           </svg>
           <span class="arrow-target">{{ LADDERS[cell.n] }}</span>
         </span>
-        <span v-else-if="SNAKES[cell.n]" class="cell-arrow down" aria-label="turun">
+        <span v-else-if="SNAKES[cell.n]" class="cell-arrow down" aria-label="fall">
           <svg viewBox="0 0 24 24" width="100%" height="100%">
             <path d="M12 20 L12 4 M12 20 L6 14 M12 20 L18 14"
               stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>

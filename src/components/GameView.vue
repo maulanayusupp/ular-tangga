@@ -7,17 +7,17 @@ const props = defineProps({ game: { type: Object, required: true } })
 
 const turnHint = computed(() => {
   if (props.game.winner.value) return ''
-  if (props.game.isRolling.value) return 'Dadu berputar…'
-  if (props.game.isMoving.value) return 'Bidak bergerak…'
-  if (props.game.isAITurn.value) return 'Bot sedang berpikir…'
-  return 'Giliranmu — tap dadu'
+  if (props.game.isRolling.value) return 'Rolling dice…'
+  if (props.game.isMoving.value) return 'Token moving…'
+  if (props.game.isAITurn.value) return 'Bot is thinking…'
+  return 'Your turn — tap the dice'
 })
 </script>
 
 <template>
   <main class="game">
     <header class="game-header">
-      <button class="icon-btn" @click="game.goToMenu()" aria-label="Kembali">
+      <button class="icon-btn" @click="game.goToMenu()" aria-label="Back to menu">
         ←
       </button>
       <div class="turn-info">

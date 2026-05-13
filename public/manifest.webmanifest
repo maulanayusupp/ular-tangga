@@ -1,7 +1,7 @@
 {
-  "name": "Ular Tangga",
-  "short_name": "Ular Tangga",
-  "description": "Game ular tangga klasik versi mobile web. Mode vs bot atau pass-and-play 2-4 pemain dengan animasi modern dan efek suara.",
+  "name": "Snakes & Ladders",
+  "short_name": "Snakes & Ladders",
+  "description": "Classic Snakes & Ladders board game as a mobile-first web app. Play vs an AI bot or pass-and-play with 2-4 players.",
   "start_url": "/",
   "scope": "/",
   "id": "/",
@@ -9,7 +9,7 @@
   "orientation": "portrait",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
-  "lang": "id",
+  "lang": "en",
   "dir": "ltr",
   "categories": ["games", "entertainment"],
   "icons": [
