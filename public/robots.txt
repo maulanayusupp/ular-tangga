@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://snakes-and-ladders.example.com/sitemap.xml
+Sitemap: https://ular-tangga-sigma.vercel.app/sitemap.xml

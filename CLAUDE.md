@@ -38,14 +38,16 @@ Each effect composes `OscillatorNode` and filtered noise buffers:
 
 All sounds route through a singleton `masterGain` (0.7) that `setMuted(true)` zeroes.
 
-## SEO / PWA placeholders
+## SEO / PWA
 
-Domain placeholder is `https://snakes-and-ladders.example.com`. Before deploying, search-replace it across:
-- `index.html` (canonical, og:url, twitter:url, JSON-LD `url`)
+Production URL: `https://ular-tangga-sigma.vercel.app` (Vercel). This URL is hardcoded in:
+- `index.html` (canonical, og:url, twitter:url, og:image, twitter:image, two JSON-LD blocks)
 - `public/robots.txt` (Sitemap line)
 - `public/sitemap.xml` (`<loc>`)
 
-OG image is SVG (`public/og-image.svg`). Most social platforms support SVG but a few prefer PNG — generate a 1200×630 PNG from the SVG and update `og:image` / `twitter:image` references if needed.
+If the domain changes, search-replace `https://ular-tangga-sigma.vercel.app` across the above.
+
+OG image is SVG (`public/og-image.svg`). Most social platforms support SVG but a few (older Twitter previews, LinkedIn) prefer PNG — generate a 1200×630 PNG from the SVG and update `og:image` / `twitter:image` references if richer previews matter.
 
 ## Build & deploy
 

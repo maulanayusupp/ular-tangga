@@ -112,19 +112,15 @@ The Web Audio API requires a user gesture for the first sound — audio activate
 
 ## 🚢 Deployment
 
+Live at **<https://ular-tangga-sigma.vercel.app>** (Vercel).
+
 `npm run build` outputs static files to `dist/`. Deploy to any static host:
 
 - Vercel / Netlify / Cloudflare Pages (drop the `dist/` folder)
 - GitHub Pages
 - Any static hosting (S3, nginx, etc.)
 
-**Before deploying, replace the placeholder URL** in these files with your real domain:
-
-- `index.html` (canonical, og:url, twitter:url, JSON-LD url, og:image, twitter:image)
-- `public/robots.txt` (Sitemap URL)
-- `public/sitemap.xml` (`<loc>`)
-
-Find & replace `https://snakes-and-ladders.example.com` → your URL.
+If you fork this repo and deploy to a different domain, update the URL in `index.html` (canonical, og:url, twitter:url, JSON-LD url, og:image, twitter:image), `public/robots.txt` (Sitemap), and `public/sitemap.xml` (`<loc>`).
 
 ## 📄 License
 
