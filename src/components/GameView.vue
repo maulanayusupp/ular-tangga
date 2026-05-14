@@ -18,15 +18,21 @@ const turnHint = computed(() => {
 function handleKeydown(e) {
   if (e.code !== 'Space' && e.key !== ' ') return
   if (e.repeat) return
-  if (props.game.mode.value !== 'playing') return
+  const g = props.game
+  if (g.mode.value !== 'playing') return
+  // Block while any animation runs or while it's the bot's turn
+  if (g.isRolling.value || g.isMoving.value || g.isAITurn.value) {
+    e.preventDefault()  // still suppress page scroll
+    return
+  }
   const t = e.target
   if (!t) return
   // Skip when typing in inputs/contenteditable
   if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable) return
-  // Skip when another focused button should handle Space natively (e.g., Back button, modal actions)
+  // Skip when another focused button should handle Space natively (Back button etc.)
   if (t.tagName === 'BUTTON' && !t.closest('.dice-btn')) return
   e.preventDefault()
-  props.game.rollDice()
+  g.rollDice()
 }
 
 onMounted(() => window.addEventListener('keydown', handleKeydown))
