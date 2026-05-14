@@ -6,6 +6,7 @@ Classic Snakes & Ladders board game as a **mobile-first web app**, built with **
 
 ## ✨ Features
 
+- 🎲 **4 board layouts** — Classic, Chaos, Long Climb, and Random (procedurally generated each game)
 - 🤖 **vs AI Bot** — Single-player against an automatic opponent
 - 👥 **Pass & Play** — 2–4 players taking turns on one device
 - 🎨 **Modern design** — Dark theme, purple-cyan gradient, mobile-first responsive
@@ -71,7 +72,16 @@ ular-tangga/
 - Landing on a **snake's head** → slide down to its tail (badge `↓nn`)
 - Landing on a **ladder's foot** → climb up to its top (badge `↑nn`)
 
-### Ladders
+### Board Layouts
+
+| Layout | Ladders | Snakes | Feel |
+| --- | ---: | ---: | --- |
+| 🎲 Classic | 11 | 10 | Balanced. The original layout. |
+| 🌪️ Chaos | 10 | 11 | Mayhem. Short hops, action everywhere. |
+| 🏔️ Long Climb | 6 | 6 | Dramatic. Fewer pieces, huge swings (a snake at 87 → 24 ends careers). |
+| 🔀 Random | 9–12 | 9–12 | A fresh procedurally generated board on every game. |
+
+### Classic Ladders
 
 | From | To |
 | ---: | ---: |
@@ -87,7 +97,7 @@ ular-tangga/
 | 78 | 98 |
 | 87 | 94 |
 
-### Snakes
+### Classic Snakes
 
 | Head (landing) | Tail (destination) |
 | ---: | ---: |

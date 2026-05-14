@@ -13,11 +13,14 @@ Vue 3 + Vite mobile-first Snakes & Ladders game. Modes: vs AI (1 bot) or pass-an
 
 Cells use boustrophedon (zigzag) numbering: row 1 (bottom) goes 1→10 left-to-right, row 2 goes 20→11 right-to-left, etc. Helper `posToCoord(n)` in `GameBoard.vue` converts a cell number into `{ left%, top% }` for visual positioning inside the 100×100 viewBox.
 
-`LADDERS` and `SNAKES` are constant maps in `useGameState.js`:
-- `LADDERS[from] = to` where `from < to` (climb up). Visual rail goes bottom-to-top.
-- `SNAKES[from] = to` where `from > to` (slide down). `from` is the head cell (where you land); `to` is the tail.
+**Layouts**: `useGameState.js` exports `LAYOUTS` — an array of `{ id, name, emoji, desc, ladders, snakes }` presets. `MainMenu.vue` lets the user pick one; `startGame({ layout })` stores `layoutId` and the composable exposes `ladders`/`snakes` as computed refs from the current layout. `GameBoard.vue` reads them via `props.game.ladders.value` / `.snakes.value` (no static imports), so the board re-renders when layout changes.
 
-To add a snake or ladder: edit only the constants in `useGameState.js`. Board overlay and arrow badges regenerate automatically.
+Layout rules (must hold for every preset):
+- `ladders[from] = to` where `from < to` (climb up)
+- `snakes[from] = to` where `from > to` (slide down) — `from` is the head (where you land)
+- No cell can be both a ladder-start and snake-head (or end). Adding a new layout: validate that the union of all `from`/`to` keys/values has no duplicates within `ladders ∪ snakes`.
+
+To add a layout: append to `LAYOUTS`. Board overlay and arrow badges regenerate automatically.
 
 ## Gotchas
 

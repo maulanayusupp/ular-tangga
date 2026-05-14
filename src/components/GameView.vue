@@ -37,6 +37,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
       <button class="icon-btn" @click="game.goToMenu()" aria-label="Back to menu">
         ←
       </button>
+      <div class="layout-pill" :title="game.currentLayout.value.desc">
+        <span>{{ game.currentLayout.value.emoji }}</span>
+        <span>{{ game.currentLayout.value.name }}</span>
+      </div>
       <div class="turn-info">
         <div class="players-row">
           <div
@@ -96,6 +100,21 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
   flex-shrink: 0;
 }
 .icon-btn:active { transform: scale(0.95); }
+
+.layout-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 
 .turn-info { flex: 1; min-width: 0; }
 .players-row {

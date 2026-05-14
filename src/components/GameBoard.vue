@@ -1,8 +1,10 @@
 <script setup>
 import { computed } from 'vue'
-import { LADDERS, SNAKES } from '../composables/useGameState.js'
 
 const props = defineProps({ game: { type: Object, required: true } })
+
+const LADDERS = computed(() => props.game.ladders.value)
+const SNAKES = computed(() => props.game.snakes.value)
 
 const cells = computed(() => {
   const arr = []
@@ -94,17 +96,20 @@ function snakeGeom(from, to) {
 }
 
 const ladders = computed(() =>
-  Object.entries(LADDERS).map(([f, t]) => ({ from: +f, to: +t, g: ladderGeom(+f, +t) }))
+  Object.entries(LADDERS.value).map(([f, t]) => ({ from: +f, to: +t, g: ladderGeom(+f, +t) }))
 )
 const snakes = computed(() =>
-  Object.entries(SNAKES).map(([f, t]) => ({ from: +f, to: +t, g: snakeGeom(+f, +t) }))
+  Object.entries(SNAKES.value).map(([f, t]) => ({ from: +f, to: +t, g: snakeGeom(+f, +t) }))
 )
 
+const ladderEndSet = computed(() => new Set(Object.values(LADDERS.value)))
+const snakeEndSet  = computed(() => new Set(Object.values(SNAKES.value)))
+
 function cellClass(n) {
-  if (LADDERS[n]) return 'ladder-start'
-  if (Object.values(LADDERS).includes(n)) return 'ladder-end'
-  if (SNAKES[n]) return 'snake-start'
-  if (Object.values(SNAKES).includes(n)) return 'snake-end'
+  if (LADDERS.value[n]) return 'ladder-start'
+  if (ladderEndSet.value.has(n)) return 'ladder-end'
+  if (SNAKES.value[n]) return 'snake-start'
+  if (snakeEndSet.value.has(n)) return 'snake-end'
   return ''
 }
 </script>
@@ -131,6 +136,7 @@ function cellClass(n) {
           </svg>
           <span class="arrow-target">{{ SNAKES[cell.n] }}</span>
         </span>
+
       </div>
 
       <svg class="overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
