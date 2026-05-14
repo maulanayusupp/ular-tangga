@@ -1,10 +1,45 @@
 import { ref, computed, reactive } from 'vue'
 import { playDice, playLadder, playSnake, playStep, playWin } from './useSound.js'
+import { useStats } from './useStats.js'
+
+// ─── Seedable PRNG (xmur3 + mulberry32) ──────────────────────
+function xmur3(str) {
+  let h = 1779033703 ^ str.length
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353)
+    h = (h << 13) | (h >>> 19)
+  }
+  return () => {
+    h = Math.imul(h ^ (h >>> 16), 2246822507)
+    h = Math.imul(h ^ (h >>> 13), 3266489909)
+    h ^= h >>> 16
+    return h >>> 0
+  }
+}
+
+function mulberry32(seed) {
+  return () => {
+    seed |= 0
+    seed = (seed + 0x6D2B79F5) | 0
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function rngFromSeed(s) {
+  return mulberry32(xmur3(String(s))())
+}
+
+export function makeSeed(len = 6) {
+  // Skip ambiguous chars (0/o, 1/l/i)
+  const chars = 'abcdefghjkmnpqrstuvwxyz23456789'
+  let s = ''
+  for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)]
+  return s
+}
 
 // ─── Board layouts ────────────────────────────────────────────
-// Each layout: ladders map (from < to, climb up) + snakes map (from > to, slide down).
-// Constraint: no cell may be both a ladder-start and snake-head (or end).
-
 export const LAYOUTS = [
   {
     id: 'classic',
@@ -57,21 +92,20 @@ export const LAYOUTS = [
   }
 ]
 
-// ─── Random layout generator ──────────────────────────────────
 // Procedurally builds ladders + snakes with no cell collisions.
-// Constraints: ladders climb (from < to), snakes fall (from > to),
-// min length 8 cells, both endpoints in [2..99] (cell 1 and 100 reserved).
-export function generateRandomLayout() {
+// Optional seed string for reproducibility.
+export function generateRandomLayout(seed) {
+  const rand = seed ? rngFromSeed(seed) : Math.random
   const used = new Set()
   const ladders = {}
   const snakes = {}
 
-  const ladderCount = 9 + Math.floor(Math.random() * 4)   // 9–12
-  const snakeCount  = 9 + Math.floor(Math.random() * 4)   // 9–12
+  const ladderCount = 9 + Math.floor(rand() * 4)   // 9–12
+  const snakeCount  = 9 + Math.floor(rand() * 4)   // 9–12
 
   function pickFree(min, max) {
     for (let tries = 0; tries < 60; tries++) {
-      const c = min + Math.floor(Math.random() * (max - min + 1))
+      const c = min + Math.floor(rand() * (max - min + 1))
       if (!used.has(c)) return c
     }
     return null
@@ -109,6 +143,7 @@ export function generateRandomLayout() {
     emoji: '🔀',
     desc: 'A fresh board every game — generated on the fly.',
     isRandom: true,
+    seed: seed || null,
     ladders,
     snakes
   }
@@ -124,11 +159,12 @@ export const PLAYER_COLORS = [
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
 export function useGameState() {
-  const mode = ref('menu')          // 'menu' | 'playing' | 'won'
+  const mode = ref('menu')
   const playerCount = ref(2)
   const vsAI = ref(true)
   const layoutId = ref('classic')
   const generatedLayout = ref(null)
+  const activeSeed = ref(null)
   const players = reactive([])
   const currentTurn = ref(0)
   const dice = ref(null)
@@ -137,6 +173,10 @@ export function useGameState() {
   const winner = ref(null)
   const message = ref('')
   const lastEvent = ref(null)
+  const humanTurns = ref(0)
+  let endRecorded = false
+
+  const { recordGameEnd, recordSnakeFall } = useStats()
 
   const currentLayout = computed(() => {
     if (layoutId.value === 'random' && generatedLayout.value) return generatedLayout.value
@@ -148,13 +188,16 @@ export function useGameState() {
   const currentPlayer = computed(() => players[currentTurn.value])
   const isAITurn = computed(() => vsAI.value && currentTurn.value !== 0 && mode.value === 'playing')
 
-  function startGame({ players: count, vsAI: ai, layout }) {
+  function startGame({ players: count, vsAI: ai, layout, seed }) {
     playerCount.value = count
     vsAI.value = ai
     if (layout) layoutId.value = layout
-    // Generate a fresh random board on each Play if Random is selected
     if (layoutId.value === 'random') {
-      generatedLayout.value = generateRandomLayout()
+      const useSeed = seed || makeSeed()
+      activeSeed.value = useSeed
+      generatedLayout.value = generateRandomLayout(useSeed)
+    } else {
+      activeSeed.value = null
     }
     players.splice(0, players.length)
     for (let i = 0; i < count; i++) {
@@ -163,7 +206,8 @@ export function useGameState() {
         name: ai && i > 0 ? `Bot ${i}` : `Player ${i + 1}`,
         position: 0,
         color: PLAYER_COLORS[i],
-        isAI: ai && i > 0
+        isAI: ai && i > 0,
+        animPhase: null   // 'climbing' | 'falling' | null
       })
     }
     currentTurn.value = 0
@@ -171,6 +215,8 @@ export function useGameState() {
     winner.value = null
     lastEvent.value = null
     message.value = ''
+    humanTurns.value = 0
+    endRecorded = false
     mode.value = 'playing'
   }
 
@@ -181,6 +227,7 @@ export function useGameState() {
 
   async function rollDice() {
     if (isRolling.value || isMoving.value || mode.value !== 'playing') return
+    if (currentTurn.value === 0) humanTurns.value += 1
     playDice()
     isRolling.value = true
     message.value = ''
@@ -197,6 +244,20 @@ export function useGameState() {
 
     await wait(350)
     await movePlayer(finalValue)
+  }
+
+  function finishWith(winningPlayer) {
+    winner.value = winningPlayer
+    mode.value = 'won'
+    playWin()
+    if (!endRecorded) {
+      endRecorded = true
+      recordGameEnd({
+        humanWon: winningPlayer.id === 0,
+        vsBot: vsAI.value,
+        turns: winningPlayer.id === 0 ? humanTurns.value : null
+      })
+    }
   }
 
   async function movePlayer(steps) {
@@ -228,9 +289,7 @@ export function useGameState() {
     await wait(250)
 
     if (player.position === 100) {
-      winner.value = player
-      mode.value = 'won'
-      playWin()
+      finishWith(player)
       isMoving.value = false
       return
     }
@@ -240,27 +299,30 @@ export function useGameState() {
     if (L[player.position]) {
       const from = player.position
       const to = L[from]
-      lastEvent.value = { type: 'ladder', from, to }
+      lastEvent.value = { type: 'ladder', from, to, ts: Date.now() }
       message.value = `🪜 Ladder! ${from} → ${to}`
       await wait(400)
       playLadder()
+      player.animPhase = 'climbing'
       player.position = to
-      await wait(600)
+      await wait(850)
+      player.animPhase = null
     } else if (S[player.position]) {
       const from = player.position
       const to = S[from]
-      lastEvent.value = { type: 'snake', from, to }
+      lastEvent.value = { type: 'snake', from, to, ts: Date.now() }
       message.value = `🐍 Snake! ${from} → ${to}`
+      recordSnakeFall(from - to)
       await wait(400)
       playSnake()
+      player.animPhase = 'falling'
       player.position = to
-      await wait(600)
+      await wait(700)
+      player.animPhase = null
     }
 
     if (player.position === 100) {
-      winner.value = player
-      mode.value = 'won'
-      playWin()
+      finishWith(player)
       isMoving.value = false
       return
     }
@@ -279,6 +341,7 @@ export function useGameState() {
     dice, isRolling, isMoving, winner, message,
     lastEvent, vsAI, isAITurn,
     layoutId, currentLayout, ladders, snakes,
+    activeSeed,
     startGame, rollDice, goToMenu
   }
 }

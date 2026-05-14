@@ -2,8 +2,10 @@
 import { computed, onMounted, onBeforeUnmount } from 'vue'
 import GameBoard from './GameBoard.vue'
 import DiceRoller from './DiceRoller.vue'
+import { useMute, toggleMute } from '../composables/useSound.js'
 
 const props = defineProps({ game: { type: Object, required: true } })
+const muted = useMute()
 
 const turnHint = computed(() => {
   if (props.game.winner.value) return ''
@@ -54,18 +56,27 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
           </div>
         </div>
       </div>
+      <button
+        class="icon-btn mute-btn"
+        @click="toggleMute"
+        :aria-label="muted ? 'Unmute sound' : 'Mute sound'"
+        :title="muted ? 'Unmute' : 'Mute'">
+        {{ muted ? '🔇' : '🔊' }}
+      </button>
     </header>
 
     <GameBoard :game="game" />
 
     <div class="bottom-bar">
-      <Transition name="msg">
-        <p v-if="game.message.value" class="status-msg" :key="game.message.value">
-          {{ game.message.value }}
-        </p>
-      </Transition>
-      <p class="turn-hint">{{ turnHint }}</p>
       <DiceRoller :game="game" />
+      <div class="info">
+        <Transition name="msg">
+          <p v-if="game.message.value" class="status-msg" :key="game.message.value">
+            {{ game.message.value }}
+          </p>
+        </Transition>
+        <p class="turn-hint">{{ turnHint }}</p>
+      </div>
     </div>
   </main>
 </template>
@@ -116,6 +127,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
   flex-shrink: 0;
 }
 
+.mute-btn { flex-shrink: 0; font-size: 16px; }
+
 .turn-info { flex: 1; min-width: 0; }
 .players-row {
   display: flex;
@@ -155,25 +168,39 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
 
 .bottom-bar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 8px;
-  padding-top: 6px;
+  justify-content: center;
+  gap: 16px;
+  padding: 4px 6px 0;
+}
+.info {
+  min-width: 0;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
 }
 .status-msg {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text);
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 999px;
   background: var(--card);
   border: 1px solid var(--border);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .turn-hint {
   margin: 0;
   font-size: 12px;
   color: var(--text-muted);
+  text-align: left;
 }
 
 .msg-enter-active, .msg-leave-active { transition: all .3s ease; }

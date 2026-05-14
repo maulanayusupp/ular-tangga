@@ -1,10 +1,47 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps({ game: { type: Object, required: true } })
 
 const LADDERS = computed(() => props.game.ladders.value)
 const SNAKES = computed(() => props.game.snakes.value)
+
+const particles = ref([])
+const shake = ref(false)
+let particleId = 0
+
+watch(() => props.game.lastEvent.value, (ev) => {
+  if (!ev) return
+  const from = posToCoord(ev.from)
+  const to = posToCoord(ev.to)
+  const isLadder = ev.type === 'ladder'
+  const count = isLadder ? 9 : 11
+  const emojis = isLadder ? ['✨', '⭐', '💫', '✨'] : ['💨', '💨', '🟢', '💨']
+  const dur = isLadder ? 1100 : 900
+
+  for (let i = 0; i < count; i++) {
+    const t = i / (count - 1)
+    const jitter = isLadder ? 3 : 5
+    const x = from.left + (to.left - from.left) * t + (Math.random() - 0.5) * jitter
+    const y = from.top  + (to.top  - from.top)  * t + (Math.random() - 0.5) * jitter
+    const id = ++particleId
+    particles.value.push({
+      id,
+      x, y,
+      emoji: emojis[i % emojis.length],
+      delay: i * (isLadder ? 70 : 50),
+      kind: isLadder ? 'spark' : 'puff'
+    })
+    setTimeout(() => {
+      particles.value = particles.value.filter((p) => p.id !== id)
+    }, dur + i * (isLadder ? 70 : 50) + 200)
+  }
+
+  if (!isLadder) {
+    shake.value = true
+    setTimeout(() => { shake.value = false }, 450)
+  }
+})
 
 const cells = computed(() => {
   const arr = []
@@ -46,7 +83,8 @@ const playerVisuals = computed(() => {
       ...p,
       left: c.left + Math.cos(angle) * radius,
       top:  c.top  + Math.sin(angle) * radius,
-      off:  c.off
+      off:  c.off,
+      phase: p.animPhase
     }
   })
 })
@@ -116,7 +154,7 @@ function cellClass(n) {
 
 <template>
   <div class="board-wrap">
-    <div class="board">
+    <div class="board" :class="{ shake: shake }">
       <div
         v-for="cell in cells"
         :key="cell.n"
@@ -232,17 +270,33 @@ function cellClass(n) {
         </g>
       </svg>
 
+      <!-- Particle layer (sparkles / smoke) -->
+      <span
+        v-for="part in particles"
+        :key="part.id"
+        :class="['particle', part.kind]"
+        :style="{
+          left: part.x + '%',
+          top: part.y + '%',
+          animationDelay: part.delay + 'ms'
+        }">{{ part.emoji }}</span>
+
       <div
         v-for="p in playerVisuals"
         :key="p.id"
         class="token"
-        :class="{ off: p.off, active: game.currentTurn.value === p.id }"
+        :class="{
+          off: p.off,
+          active: game.currentTurn.value === p.id,
+          climbing: p.phase === 'climbing',
+          falling: p.phase === 'falling'
+        }"
         :style="{
           left: p.left + '%',
           top: p.top + '%',
           '--c': p.color.token,
           '--g': p.color.glow,
-          zIndex: 50 + p.id
+          zIndex: p.phase ? 80 + p.id : 50 + p.id
         }">
         <span class="token-inner">{{ p.id + 1 }}</span>
       </div>
@@ -363,8 +417,94 @@ function cellClass(n) {
   0%, 100% { box-shadow: 0 3px 10px var(--g), 0 0 0 0 var(--g), inset 0 2px 4px rgba(255,255,255,0.4); }
   50%      { box-shadow: 0 3px 10px var(--g), 0 0 0 8px transparent, inset 0 2px 4px rgba(255,255,255,0.4); }
 }
+
+/* ─── Climb animation (ladder) ─── */
+.token.climbing {
+  transition:
+    left .85s cubic-bezier(.18, .89, .32, 1.18),
+    top  .85s cubic-bezier(.18, .89, .32, 1.18);
+  animation: climbing-wiggle .85s ease-in-out;
+  filter: drop-shadow(0 0 12px #fde047);
+}
+@keyframes climbing-wiggle {
+  0%   { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+  20%  { transform: translate(-50%, -50%) rotate(-12deg) scale(1.18); }
+  40%  { transform: translate(-50%, -50%) rotate(8deg) scale(1.22); }
+  60%  { transform: translate(-50%, -50%) rotate(-6deg) scale(1.18); }
+  80%  { transform: translate(-50%, -50%) rotate(4deg) scale(1.1); }
+  100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+}
+
+/* ─── Fall animation (snake) ─── */
+.token.falling {
+  transition:
+    left .7s cubic-bezier(.55, 0, .85, .25),
+    top  .7s cubic-bezier(.55, 0, .85, .25);
+  animation: falling-spin .7s cubic-bezier(.5, 0, .9, .4);
+  filter: drop-shadow(0 0 12px #34d399);
+}
+@keyframes falling-spin {
+  0%   { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+  30%  { transform: translate(-50%, -50%) rotate(180deg) scale(0.78); }
+  60%  { transform: translate(-50%, -50%) rotate(540deg) scale(0.72); }
+  85%  { transform: translate(-50%, -50%) rotate(720deg) scale(1.18); }
+  100% { transform: translate(-50%, -50%) rotate(720deg) scale(1); }
+}
+
 .token-inner {
   text-shadow: 0 1px 2px rgba(0,0,0,0.3);
   line-height: 1;
+}
+
+/* ─── Particles ─── */
+.particle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  z-index: 60;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.particle.spark {
+  font-size: clamp(10px, 1.8vw, 14px);
+  animation: spark-burst 1.1s ease-out forwards;
+  filter: drop-shadow(0 0 4px #fde047);
+}
+@keyframes spark-burst {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2) rotate(0deg); }
+  20%  { opacity: 1; transform: translate(-50%, -50%) scale(1.3) rotate(40deg); }
+  60%  { opacity: 0.9; transform: translate(-50%, -50%) scale(1.1) rotate(180deg); }
+  100% { opacity: 0; transform: translate(-50%, -160%) scale(0.6) rotate(280deg); }
+}
+.particle.puff {
+  font-size: clamp(10px, 2.2vw, 16px);
+  animation: puff-fall .9s ease-out forwards;
+  filter: blur(0.5px);
+}
+@keyframes puff-fall {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  15%  { opacity: 0.95; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, 50%) scale(1.6); }
+}
+
+/* ─── Board shake (snake) ─── */
+.board.shake {
+  animation: board-shake .45s cubic-bezier(.36, .07, .19, .97);
+}
+@keyframes board-shake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-4px, 1px); }
+  25% { transform: translate(4px, -2px); }
+  40% { transform: translate(-3px, 2px); }
+  55% { transform: translate(3px, -1px); }
+  70% { transform: translate(-2px, 1px); }
+  85% { transform: translate(2px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .token.climbing, .token.falling { animation: none; }
+  .particle { animation: none; opacity: 0; }
+  .board.shake { animation: none; }
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { LAYOUTS } from '../composables/useGameState.js'
+import { useStats } from '../composables/useStats.js'
 
 const props = defineProps({ game: { type: Object, required: true } })
 
@@ -8,10 +9,31 @@ const step = ref(1)                 // 1 = board, 2 = mode
 const layoutId = ref(props.game.layoutId.value || 'classic')
 const mode = ref('ai')              // 'ai' | 'pvp'
 const playerCount = ref(2)
+const pendingSeed = ref(null)        // from URL ?seed=
+
+const { stats } = useStats()
+
+onMounted(() => {
+  const params = new URLSearchParams(window.location.search)
+  const urlSeed = params.get('seed')
+  const urlLayout = params.get('layout')
+  if (urlSeed) {
+    layoutId.value = urlLayout === 'random' || !urlLayout ? 'random' : layoutId.value
+    pendingSeed.value = urlSeed
+    // Strip seed from address bar so it doesn't replay on refresh
+    if (window.history && window.history.replaceState) {
+      const clean = new URL(window.location.href)
+      clean.search = ''
+      window.history.replaceState({}, '', clean.toString())
+    }
+  }
+})
 
 const selectedLayout = computed(() =>
   LAYOUTS.find((l) => l.id === layoutId.value) || LAYOUTS[0]
 )
+
+const hasStats = computed(() => stats.gamesPlayed > 0)
 
 function counts(layout) {
   return {
@@ -24,8 +46,16 @@ function play() {
   props.game.startGame({
     players: mode.value === 'ai' ? 2 : playerCount.value,
     vsAI: mode.value === 'ai',
-    layout: layoutId.value
+    layout: layoutId.value,
+    seed: layoutId.value === 'random' ? pendingSeed.value : null
   })
+  pendingSeed.value = null
+}
+
+// When user switches away from Random, clear pending seed (no longer relevant)
+function selectLayout(id) {
+  if (id !== 'random') pendingSeed.value = null
+  layoutId.value = id
 }
 </script>
 
@@ -87,7 +117,7 @@ function play() {
               v-for="L in LAYOUTS"
               :key="L.id"
               :class="['layout-card', { active: layoutId === L.id, random: L.isRandom }]"
-              @click="layoutId = L.id">
+              @click="selectLayout(L.id)">
               <span v-if="layoutId === L.id" class="check">✓</span>
               <span class="layout-emoji">{{ L.emoji }}</span>
               <span class="layout-name">{{ L.name }}</span>
@@ -101,6 +131,9 @@ function play() {
                   <span class="badge ladder">🪜 {{ counts(L).ladders }}</span>
                   <span class="badge snake">🐍 {{ counts(L).snakes }}</span>
                 </template>
+              </span>
+              <span v-if="L.isRandom && pendingSeed && layoutId === L.id" class="seed-pill">
+                seed: {{ pendingSeed }}
               </span>
             </button>
           </div>
@@ -155,7 +188,34 @@ function play() {
           </Transition>
         </section>
 
-        <div class="stats">
+        <div v-if="hasStats" class="stats-card">
+          <div class="stats-head">
+            <span class="stats-title">📊 Your stats</span>
+            <span v-if="stats.streak > 0" class="streak-badge">
+              🔥 {{ stats.streak }}-day streak
+            </span>
+          </div>
+          <div class="stats-grid">
+            <div class="stat">
+              <span class="stat-num">{{ stats.botWins }}</span>
+              <span class="stat-label">vs Bot wins</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">{{ stats.fastestWinTurns ?? '—' }}</span>
+              <span class="stat-label">Fastest (turns)</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">{{ stats.longestSnakeFall || '—' }}</span>
+              <span class="stat-label">Longest fall</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">{{ stats.gamesPlayed }}</span>
+              <span class="stat-label">Games played</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="stats-grid">
           <div class="stat">
             <span class="stat-num">{{ selectedLayout.isRandom ? '~10' : counts(selectedLayout).ladders }}</span>
             <span class="stat-label">Ladders</span>
@@ -655,19 +715,51 @@ h1 {
 }
 
 /* ═══════════════════ Stats ═══════════════════ */
-.stats {
+.stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
+.stats-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px 14px 12px;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+.stats-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.stats-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+.streak-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(239,68,68,0.25));
+  border: 1px solid rgba(245,158,11,0.4);
+  color: #fde68a;
+}
+.stats-card .stats-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
 .stat {
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 6px;
+  border-radius: 12px;
+  padding: 12px 4px;
   text-align: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   transition: transform .25s ease, border-color .25s ease;
 }
 .stat:hover {
@@ -676,7 +768,7 @@ h1 {
 }
 .stat-num {
   display: block;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 900;
   background: linear-gradient(135deg, #a78bfa, #22d3ee);
   -webkit-background-clip: text;
@@ -687,12 +779,25 @@ h1 {
 }
 .stat-label {
   display: block;
-  font-size: 10px;
+  font-size: 9.5px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
   margin-top: 4px;
   font-weight: 700;
+}
+
+.seed-pill {
+  margin-top: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fbcfe8;
+  background: rgba(236,72,153,0.18);
+  border: 1px solid rgba(236,72,153,0.4);
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
 }
 
 /* ═══════════════════ Play / Next button ═══════════════════ */
